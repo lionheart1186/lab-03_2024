@@ -5,12 +5,12 @@ author: "put your name here"
 date: 'Lab: Wed. Jan. 24. Due: Wed. Jan. 31'
 fontsize: "12pt"
 output:
+  word_document:
+    toc: true
   pdf_document: 
     toc: yes
     includes:
       in_header: ees3310.sty
-  word_document:
-    toc: true
   github_document:
     toc: true
   html_document: 
@@ -72,10 +72,18 @@ a) **Would an additional 10 ppm of methane in the atmosphere have a larger or
 ```{r ex_4_1_a, include=TRUE, message=FALSE}
 # TODO
 # Put your R code here
+
+modtran_default = run_modtran()
+plot_modtran(modtran_data = modtran_default)
+
+modtran_moreCarbon = run_modtran(co2_ppm = 410)
+plot_modtran(modtran_data = modtran_moreCarbon)
+
+modtran_moreMethane = run_modtran(ch4_ppm = 11.7)
+plot_modtran(modtran_data = modtran_moreMethane)
 ```
 
-**Answer:** _Put your answer here._ Be sure to explain your reasoning and 
-show data, plots, etc. to explain how you came up with your answer.
+**Answer:** _Put your answer here._ The additional 10 ppm of methane has a greater impact. You can see this both because the curve looks more noticeably different than the default with the extra methane than with the co2, and there is also a greater difference in the final IR Flux values.
 
 b) **Where in the spectrum does methane absorb? What concentration does it take 
    to begin to saturate the absorption in this band? Explain what you are looking 
@@ -87,11 +95,22 @@ b) **Where in the spectrum does methane absorb? What concentration does it take
 ```{r ex_4_1_b, include=TRUE, message=FALSE}
 # TODO
 # Put your R code here
+
+methaneValues = c(0,1,2,4,8,16,32,64,128)
+
+
+for (i in methaneValues) {
+  modtran_spectrum = run_modtran(co2_ppm = 0, ch4_ppm = i, trop_o3_ppb = 0, strat_o3_scale = 0, h2o_scale = 0, freon_scale = 0)
+  p <- plot_modtran(modtran_data = modtran_spectrum)
+  print(p)
+}
 ```
 
 **Answer:** _Put your answer here._ Be sure to show your work and
 include any data, plots, etc. that you need in order to explain how
 you came up with your answer.
+
+The plot shows that the wavenumbers between about 1100 and onwards get altered more noticeably the more methane is added, with most of the discrepancy from the base curve occurring between about 1225 and 1450 cm^-1, so that is likely where the absorption spectrum is.
 
   
 c) **Would a doubling of methane have as great an impact on the heat balance as a 
@@ -101,13 +120,20 @@ c) **Would a doubling of methane have as great an impact on the heat balance as 
    See the suggestion in the `lab-03-instructions` document.
 
 ```{r ex_4_1_c, include=TRUE, message=FALSE}
-# TODO
-# Put your R code here
+plot_modtran(modtran_data = modtran_default)
+
+modtran_DoubleC = run_modtran(co2_ppm = 800)
+plot_modtran(modtran_DoubleC)
+
+modtran_DoubleM = run_modtran(ch4_ppm = 3.4)
+plot_modtran(modtran_DoubleM)
 ```
 
 **Answer:** _Put your answer here._ Be sure to show your work and
 include any data, plots, etc. that you need in order to explain how
 you came up with your answer.
+
+The change to the graph and to the final IR Flux value differs from the default more with the double CO2 than with the double methane, so doubling the CO2 has a greater impact.
 
 
 d) **What is the "equivalent CO~2~" of doubling atmospheric methane? That is to 
@@ -116,53 +142,19 @@ d) **What is the "equivalent CO~2~" of doubling atmospheric methane? That is to
    change to ppm methane change?**
 
 ```{r ex_4_1_d, include=TRUE, message=FALSE}
-# TODO
-# Put your R code here
+
+plot_modtran(modtran_data = modtran_default)
+
+eqCo2Values = c(425,450,475,500,525,550,575,600)
+
+for (i in eqCo2Values) {
+  modtran_Eq = run_modtran(co2_ppm = i)
+  p <- plot_modtran(modtran_data = modtran_Eq)
+  print(p)
+}
+
+
 ```
-
-**Answer:** _Put your answer here._ Be sure to show your work and
-include any data, plots, etc. that you need in order to explain how
-you came up with your answer.
-
-
-## Exercise 4.2: CO~2~ (Graduate students only)
-
-a) **Is the direct effect of increasing CO~2~ on the energy output at the top of
-   the atmosphere larger in high latitudes or in the tropics?**
-
-   **Hint:**
-   See the hint in the `lab-03-instructions` document.
-
-
-```{r ex_4_2_a, include=TRUE, message=FALSE}
-# TODO
-# Put your R code here
-```
-
-**Answer:** _Put your answer here._ Be sure to show your work and
-include any data, plots, etc. that you need in order to explain how
-you came up with your answer.
-
-
-b) **Set pCO~2~ to an absurdly high value of 10,000 ppm. You will see a spike
-   in the CO~2~ absorption band. What temperature is this light coming from? 
-   Where in the atmosphere do you think this comes from?**
-
-   **Now turn on clouds and run the model again. Explain what you see.
-   Why are night-time temperatures warmer when there are clouds?**
-
-   **Hint:**
-   See the hint in the `lab-03-instructions` document and
-   for the second part of this exercise, try using "altostratus" clouds.
-
-```{r ex_4_2_b, include=TRUE, message=FALSE}
-# TODO
-# Put your R code here
-```
-
-**Answer:** _Put your answer here._ Be sure to show your work and
-include any data, plots, etc. that you need in order to explain how
-you came up with your answer.
 
 
 ## Exercise 4.3: Water vapor
@@ -180,13 +172,19 @@ a) **How much extra outgoing IR would you get by raising the temperature of the
    See the hint in the `lab-03-instructions` document.
 
 ```{r ex_4_3_a, include=TRUE, message=FALSE}
-# TODO
-# Put your R code here
+
+plot_modtran(modtran_data = modtran_default)
+
+modtran_raisedTemp = run_modtran(delta_t = 5)
+plot_modtran(modtran_data = modtran_raisedTemp)
+
 ```
 
 **Answer:** _Put your answer here._ Be sure to show your work and
 include any data, plots, etc. that you need in order to explain how
 you came up with your answer.
+
+Increasing the temperature lifts the MODTRAN curve upwards noticeably. This checks out, as intensity tends to increase with higher temperature and since the colored baseline temperature curves stay constant, the MODTRAN curve will elevate relative to those curves on the intensity axis.
 
 b) **More water can evaporate into warm air than into cool air. Change the
    model settings to hold the water vapor at constant relative humidity 
@@ -203,37 +201,65 @@ b) **More water can evaporate into warm air than into cool air. Change the
 ```{r ex_4_3_b, include=TRUE, message=FALSE}
 # TODO
 # Put your R code here
+
+#first to get the baseline from the last part so that everything is easy to see and parse
+
+plot_modtran(modtran_data = modtran_raisedTemp)
+
+modtran_RelHumid = run_modtran(delta_t = 5, h2o_fixed = 'relative humidity')
+plot_modtran(modtran_data = modtran_RelHumid)
 ```
 
 **Answer:** _Put your answer here._ Be sure to show your work and
 include any data, plots, etc. that you need in order to explain how
 you came up with your answer.
 
-c) **Now see this effect in another way.**
+The IR Flux goes down by a little under 9 units when the model holds humidity constant compared to when it holds vapor pressure. These graphs would imply that more water vapor would mean the earth is MORE sensitive to CO2
 
+c) **Now see this effect in another way.**
    * **Starting from the default base case, record the total outgoing 
-     IR flux.**
+     IR flux.** Flux = 298.67
 
    * **Now double CO~2~. The temperature in the model stays the
      same (that's how the model is written), but the outgoing IR flux
-     goes down.**
+     goes down.** Flux = 295.34
 
    * **Using constant water vapor pressure, adjust the temperature offset
      until you get the original IR flux back again. Record the change in
-     temperature.**
+     temperature.** Necessary Delta T ~= 0.75
     
    * **Now repeat the exercise, but holding the relative humidity fixed
-     instead of the water vapor pressure.**
+     instead of the water vapor pressure.** Delta T ~= 1.2
     
    * **The ratio of the warming when you hold relative humidity fixed
      to the warming when you hold water vapor pressure fixed is the 
-     feedback factor for water vapor. What is it?**
+     feedback factor for water vapor. What is it?** 1.2 / 0.75 = 1.6. Ratio of 1.6
 
 ```{r ex_4_3_c, include=TRUE, message=FALSE}
 # TODO
 # Put your R code here
+
+#default
+#plot_modtran(modtran_data = modtran_default)
+
+#doubleCo2
+#plot_modtran(modtran_data = modtran_DoubleC)
+
+#constant pressure, get flux back to 298.67
+#tempValues = c(0.25,0.5,0.75,1)
+#for (i in tempValues) {
+ # modtran_FluxReturn = run_modtran(co2_ppm = 800, delta_t = i)
+ # p <- plot_modtran (modtran_data = modtran_FluxReturn)
+ # print(p)
+#}
+
+#constant humidity, get flux back to 298.67
+ newTemps = c(1.05,1.1,1.15,1.2,1.25)
+ for (j in newTemps) {
+   modtran_NewFluxReturn = run_modtran(co2_ppm = 800, delta_t = j, h2o_fixed = 'relative humidity')
+   p <- plot_modtran(modtran_data = modtran_NewFluxReturn)
+   print(p)
+ }
 ```
 
-**Answer:** _Put your answer here._ Be sure to show your work and
-include any data, plots, etc. that you need in order to explain how
-you came up with your answer.
+**Answer:** _Put your answer here._ Questions are answered right after they are posed. 
